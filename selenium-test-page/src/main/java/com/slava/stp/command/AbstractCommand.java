@@ -1,89 +1,58 @@
 package com.slava.stp.command;
 
-import java.util.List;
-
-import org.openqa.selenium.interactions.HasInputDevices;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.interactions.Keyboard;
-import org.openqa.selenium.interactions.Mouse;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import com.thoughtworks.selenium.webdriven.commands.AlertOverride;
-import com.thoughtworks.selenium.webdriven.CompoundMutator;
-import com.thoughtworks.selenium.webdriven.ElementFinder;
-import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
-import com.thoughtworks.selenium.webdriven.Windows;
-
-import com.slava.stp.By;
 import com.slava.stp.Driver;
 import com.slava.stp.WebDriverBackedSelenium;
+import com.slava.stp.by.By;
 import com.slava.stp.command.$common.CommonAbstract;
 import com.slava.stp.exception.ValueFieldMustBeEmpty;
 import com.slava.stp.junit.Assert;
 import com.slava.stp.ui.Select;
 import com.slava.stp.util.StringUtil;
+import com.thoughtworks.selenium.webdriven.CompoundMutator;
+import com.thoughtworks.selenium.webdriven.ElementFinder;
+import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
+import com.thoughtworks.selenium.webdriven.Windows;
+import com.thoughtworks.selenium.webdriven.commands.AlertOverride;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.HasInputDevices;
+import org.openqa.selenium.interactions.Keyboard;
+import org.openqa.selenium.interactions.Mouse;
+
+import java.util.List;
 
 public abstract class AbstractCommand implements Command {
 
-    static public class CommonCommandResponse {
-
-        public enum ResponseTypes {
-            BOOLEAN, STRING, OBJECT, NULL;
-
-            public static ResponseTypes getType(Object o) {
-                if (o == null) {
-                    return ResponseTypes.NULL;
-                } else if (o instanceof Boolean) {
-                    return ResponseTypes.BOOLEAN;
-                } else if (o instanceof String) {
-                    return ResponseTypes.STRING;
-                } else {
-                    return ResponseTypes.OBJECT;
-                }
-            }
-        }
-
-        private Object executedValue;
-        private String secondValue;
-        private boolean positive;
-
-        public CommonCommandResponse(Object executeValue, String secondValue, boolean positive) {
-            this.executedValue = executeValue;
-            this.secondValue = secondValue;
-            this.positive = positive;
-        }
-
-        public boolean isPositive() {
-            return positive;
-        }
-
-        public String getSecondValue() {
-            return secondValue;
-        }
-
-        public Object getExecutedValue() {
-            return executedValue;
-        }
-
-        public String getExecutedValueString() {
-            return executedValue.toString();
-        }
-
-        public boolean getExecutedValueBoolean() {
-            return Boolean.valueOf(getExecutedValueString()).booleanValue();
-        }
-
-        public ResponseTypes getType() {
-            return ResponseTypes.getType(executedValue);
-        }
-    }
-
     protected Driver driver;
 
-    @Override
-    public void setDriver(Driver driver) {
-        this.driver = driver;
+    public static void assertEquals(String expected, String actual) {
+        Assert.assertEquals(expected, actual);
+    }
+
+    public static void assertNotEquals(String expected, String actual) {
+        Assert.assertNotEquals(expected, actual);
+    }
+
+    public static void assertEquals(Object expected, Object actual) {
+        Assert.assertEquals((Object) expected.toString(), (Object) actual.toString());
+    }
+
+    public static void assertNotEquals(Object expected, Object actual) {
+        Assert.assertNotEquals((Object) expected.toString(), (Object) actual.toString());
+    }
+
+    public static void assertTrue(Object b) {
+        Assert.assertTrue(((Boolean) b).booleanValue());
+    }
+
+    public static void assertFalse(Object b) {
+        Assert.assertFalse(((Boolean) b).booleanValue());
+    }
+
+    public static void fail(String message) {
+        Assert.fail(message);
     }
 
     public String getBaseUrl() {
@@ -100,6 +69,11 @@ public abstract class AbstractCommand implements Command {
 
     public WebDriver getDriver() {
         return driver.getDriver();
+    }
+
+    @Override
+    public void setDriver(Driver driver) {
+        this.driver = driver;
     }
 
     public Actions getActions() {
@@ -226,7 +200,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     public void checkValueFieldIsEmpty() {
-        if (!StringUtil.isEmpty(getValue())) {
+        if (!StringUtil.isEmptyOrNull(getValue())) {
             throw new ValueFieldMustBeEmpty(this);
         }
     }
@@ -245,31 +219,56 @@ public abstract class AbstractCommand implements Command {
         return "command=" + getCommand() + ", target=" + getTarget() + ", value=" + getValue();
     }
 
-    public static void assertEquals(String expected, String actual) {
-        Assert.assertEquals(expected, actual);
-    }
+    static public class CommonCommandResponse {
 
-    public static void assertNotEquals(String expected, String actual) {
-        Assert.assertNotEquals(expected, actual);
-    }
+        private Object executedValue;
+        private String secondValue;
+        private boolean positive;
 
-    public static void assertEquals(Object expected, Object actual) {
-        Assert.assertEquals((Object) expected.toString(), (Object) actual.toString());
-    }
+        public CommonCommandResponse(Object executeValue, String secondValue, boolean positive) {
+            this.executedValue = executeValue;
+            this.secondValue = secondValue;
+            this.positive = positive;
+        }
 
-    public static void assertNotEquals(Object expected, Object actual) {
-        Assert.assertNotEquals((Object) expected.toString(), (Object) actual.toString());
-    }
+        public boolean isPositive() {
+            return positive;
+        }
 
-    public static void assertTrue(Object b) {
-        Assert.assertTrue(((Boolean) b).booleanValue());
-    }
+        public String getSecondValue() {
+            return secondValue;
+        }
 
-    public static void assertFalse(Object b) {
-        Assert.assertFalse(((Boolean) b).booleanValue());
-    }
+        public Object getExecutedValue() {
+            return executedValue;
+        }
 
-    public static void fail(String message) {
-        Assert.fail(message);
+        public String getExecutedValueString() {
+            return executedValue.toString();
+        }
+
+        public boolean getExecutedValueBoolean() {
+            return Boolean.valueOf(getExecutedValueString()).booleanValue();
+        }
+
+        public ResponseTypes getType() {
+            return ResponseTypes.getType(executedValue);
+        }
+
+        public enum ResponseTypes {
+            BOOLEAN, STRING, OBJECT, NULL;
+
+            public static ResponseTypes getType(Object o) {
+                if (o == null) {
+                    return ResponseTypes.NULL;
+                } else if (o instanceof Boolean) {
+                    return ResponseTypes.BOOLEAN;
+                } else if (o instanceof String) {
+                    return ResponseTypes.STRING;
+                } else {
+                    return ResponseTypes.OBJECT;
+                }
+            }
+        }
     }
 }
