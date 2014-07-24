@@ -24,6 +24,11 @@
             <version>1.2.16</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.mahout.commons</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>2.0-mahout</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
