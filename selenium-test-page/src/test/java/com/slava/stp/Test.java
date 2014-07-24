@@ -14,6 +14,6 @@ public class Test {
                 "-f", "./tests", "-t", "public_main\\.xml"
         });
 
-        SeleniumShell.getInstance().run("", "arg0", "arg1", "arg2");
+        //SeleniumShell.getInstance().run("", "arg0", "arg1", "arg2");
     }
 }
